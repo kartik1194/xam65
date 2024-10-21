@@ -1,0 +1,6 @@
+[
+    { "product_id": "1", "product_category": "Electronics", "product_name": "Smartphone" },
+    { "product_id": "2", "product_category": "Electronics", "product_name": "Television" },
+    { "product_id": "3", "product_category": "Computer", "product_name": "Laptop" },
+    { "product_id": "4", "product_category": "Computer", "product_name": "Desktop PC" }
+]

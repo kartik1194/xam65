@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task Status</title>
+</head>
+<body>
+    <h2>Update Task Status</h2>
+    <div id="responseMessage"></div>
+    <label for="taskId">Task ID:</label>
+    <input type="text" id="taskId" required>
+    <br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" required>
+    <br><br>
+    <button id="updateBtn">Update Task</button>
+
+    <script>
+        document.getElementById('updateBtn').addEventListener('click', function () {
+            const taskId = document.getElementById('taskId').value;
+            const status = document.getElementById('status').value;
+            const responseMessage = document.getElementById('responseMessage');
+
+            if (!taskId || !status) {
+                responseMessage.innerHTML = '<p style="color: red;">Task ID and status are required.</p>';
+                return;
+            }
+
+            const data = {
+                taskId: taskId,
+                status: status
+            };
+
+            fetch('/updateTask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    responseMessage.innerHTML = '<p style="color: green;">Task updated successfully!</p>';
+                } else {
+                    responseMessage.innerHTML = '<p style="color: red;">Task update failed: ' + response.message + '</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                responseMessage.innerHTML = '<p style="color: red;">Error during task update. Try again later.</p>';
+            });
+        });
+    </script>
+</body>
+</html>

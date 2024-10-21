@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .task {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get Todo List</h1>
+    <label for="userid">User ID:</label>
+    <input type="text" id="userid" required>
+    <button id="getTodoBtn">Get Todos</button>
+
+    <div id="todoContainer"></div>
+
+    <script>
+        document.getElementById('getTodoBtn').addEventListener('click', function () {
+            const userid = document.getElementById('userid').value;
+            const todoContainer = document.getElementById('todoContainer');
+            todoContainer.innerHTML = ''; // Clear previous results
+
+            if (!userid) {
+                todoContainer.innerHTML = '<p style="color: red;">User ID is required.</p>';
+                return;
+            }
+
+            fetch('/GetTodo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userid })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    data.tasks.forEach(task => {
+                        const taskDiv = document.createElement('div');
+                        taskDiv.classList.add('task');
+                        taskDiv.innerHTML = `<strong>Task ID:</strong> ${task.taskid} <br> <strong>Task:</strong> ${task.name} <br> <strong>Status:</strong> ${task.isCompleted ? 'Completed' : 'Pending'}`;
+                        todoContainer.appendChild(taskDiv);
+                    });
+                } else {
+                    todoContainer.innerHTML = `<p style="color: red;">${data.message}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                todoContainer.innerHTML = '<p style="color: red;">Failed to load tasks. Please try again later.</p>';
+            });
+        });
+    </script>
+</body>
+</html>

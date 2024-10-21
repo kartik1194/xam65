@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        select, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Product Category</h1>
+    <select id="categorySelect">
+        <option value="">--Select Category--</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Computer">Computer</option>
+    </select>
+    <button id="submitBtn">Get Products</button>
+
+    <div id="productList"></div>
+
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const category = document.getElementById('categorySelect').value;
+
+            if (!category) {
+                alert('Please select a category.');
+                return;
+            }
+
+            // Send AJAX request to the server
+            fetch(`/GetProducts?category=${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayProducts(data.products);
+                    } else {
+                        alert('No products found for this category.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again later.');
+                });
+        });
+
+        function displayProducts(products) {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = ''; // Clear previous results
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>No products found.</p>';
+                return;
+            }
+
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.textContent = `Product Name: ${product.product_name} (ID: ${product.product_id})`;
+                productList.appendChild(productDiv);
+            });
+        }
+    </script>
+</body>
+</html>

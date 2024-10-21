@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Region Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        select, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Region</h1>
+    <select id="regionSelect">
+        <option value="">--Select Region--</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Punjab">Punjab</option>
+    </select>
+    <button id="submitBtn">Get Users</button>
+
+    <div id="userList"></div>
+
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const region = document.getElementById('regionSelect').value;
+
+            if (!region) {
+                alert('Please select a region.');
+                return;
+            }
+
+            // Send AJAX request to the server
+            fetch('/GetUsers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ region })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayUsers(data.users);
+                } else {
+                    alert('No users found for this region.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
+        });
+
+        function displayUsers(users) {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = ''; // Clear previous results
+
+            if (users.length === 0) {
+                userList.innerHTML = '<p>No users found.</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.textContent = `Name: ${user.name}, Region: ${user.region}`;
+                userList.appendChild(userDiv);
+            });
+        }
+    </script>
+</body>
+</html>

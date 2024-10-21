@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+<body>
+    <h2>Sign Up</h2>
+    <div id="responseMessage"></div>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br><br>
+    <button id="signupBtn">Sign Up</button>
+
+    <script>
+        document.getElementById('signupBtn').addEventListener('click', function () {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const responseMessage = document.getElementById('responseMessage');
+
+            // Check if inputs are not empty
+            if (!username || !password) {
+                responseMessage.innerHTML = '<p style="color: red;">Username and password are required.</p>';
+                return;
+            }
+
+            const data = {
+                username: username,
+                password: password
+            };
+
+            // Creating a POST request using Fetch API
+            fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    responseMessage.innerHTML = '<p style="color: green;">Signup successful!</p>';
+                } else {
+                    responseMessage.innerHTML = '<p style="color: red;">Signup failed: ' + response.message + '</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                responseMessage.innerHTML = '<p style="color: red;">Error during signup. Try again later.</p>';
+            });
+        });
+    </script>
+</body>
+</html>
